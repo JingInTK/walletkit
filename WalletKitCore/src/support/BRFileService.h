@@ -31,6 +31,8 @@
 #include "BRSet.h"
 #include "BRInt.h"
 
+// TODO: Update the fileService{Create,Load,...} Interfaces to Use an 'External DBMS'
+
 // Both Bitcoin and Ethereum Wallet Managers include the ability to save and load peers, block,
 // transactions and logs (for Ethereum) to the file system.  But, they both implement the file
 // operations independently.  Pull out the implementation into BRFileService.

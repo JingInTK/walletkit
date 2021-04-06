@@ -14,6 +14,7 @@
 #include "BRCryptoNetwork.h"
 #include "BRCryptoWalletManager.h"
 #include "BRCryptoClient.h"
+#include "BRCryptoFileServiceClient.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,7 +28,8 @@ extern BRCryptoSystem
 cryptoSystemCreate (BRCryptoClient client,
                     BRCryptoListener listener,
                     BRCryptoAccount account,
-                    const char *path,
+                    // TODO: BRCryptoFileServiceClient *fileServiceClient,
+                    const char *path,  // Replace if using ^ client
                     BRCryptoBoolean onMainnet);
 
 extern BRCryptoBoolean

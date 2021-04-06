@@ -34,6 +34,9 @@
 #include <stdbool.h>
 #include "support/BROSCompat.h"
 
+// TODO: Implement the fileService{Create,Load,...} Interfafces to Use an 'External DBMS'
+
+// TODO: Make the Existing SQLite3 Implemenation into a default 'External DBMS'.
 #include "../vendor/sqlite3/sqlite3.h"
 typedef int sqlite3_status_code;
 

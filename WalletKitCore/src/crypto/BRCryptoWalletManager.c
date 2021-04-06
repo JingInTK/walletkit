@@ -292,6 +292,7 @@ cryptoWalletManagerAllocAndInit (size_t sizeInBytes,
     const char *currencyName = cryptoBlockChainTypeGetCurrencyCode (manager->type);
     const char *networkName  = cryptoNetworkGetDesc(network);
 
+    // TODO: BRCryptoFileServiceClient - likely impact `path', 'currencyName' and 'networkName'
     // TODO: Replace `createFileService` with `getFileServiceSpecifications`
     manager->fileService = manager->handlers->createFileService (manager,
                                                                  manager->path,

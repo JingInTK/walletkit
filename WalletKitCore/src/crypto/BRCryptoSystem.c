@@ -220,7 +220,8 @@ extern BRCryptoSystem
 cryptoSystemCreate (BRCryptoClient client,
                     BRCryptoListener listener,
                     BRCryptoAccount account,
-                    const char *basePath,
+                    // TODO: BRCryptoFileServiceClient *fileServiceClient,
+                    const char *basePath,  // Replace if using ^ client
                     BRCryptoBoolean onMainnet) {
     BRCryptoSystem system = calloc (1, sizeof (struct BRCryptoSystemRecord));
 
@@ -237,6 +238,7 @@ cryptoSystemCreate (BRCryptoClient client,
     sprintf (system->path, "%s/%s", basePath, accountFileSystemIdentifier);
     free (accountFileSystemIdentifier);
 
+    // TODO: BRCryptoFileServiceClient - likely impact `path', 'system' and 'state'
     // Create the system-state file service
     system->fileService = fileServiceCreateFromTypeSpecifications (system->path, "system", "state",
                                                                    system,
