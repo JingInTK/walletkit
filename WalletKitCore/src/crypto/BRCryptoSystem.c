@@ -385,7 +385,7 @@ cryptoSystemSetState (BRCryptoSystem system,
 extern const char *
 cryptoSystemEventTypeString (BRCryptoSystemEventType type) {
     static const char *names[] = {
-        "CRYPTO_WALLET_EVENT_CREATED",
+        "CRYPTO_SYSTEM_EVENT_CREATED",
         "CRYPTO_SYSTEM_EVENT_CHANGED",
         "CRYPTO_SYSTEM_EVENT_DELETED",
 
@@ -639,6 +639,8 @@ cryptoSystemAddWalletManager (BRCryptoSystem system,
     pthread_mutex_lock (&system->lock);
     if (CRYPTO_FALSE == cryptoSystemHasWalletManagerFor (system, manager, NULL, false)) {
         array_add (system->managers, cryptoWalletManagerTake(manager));
+        printf ("DBG: Added: WalletManager: %s\n",
+                cryptoNetworkGetName(cryptoWalletManagerGetNetwork(manager)));
         cryptoListenerGenerateSystemEvent (system->listener, system, (BRCryptoSystemEvent) {
             CRYPTO_SYSTEM_EVENT_MANAGER_ADDED,
             { .manager = cryptoWalletManagerTake (manager) }

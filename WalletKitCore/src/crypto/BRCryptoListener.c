@@ -17,7 +17,46 @@
 #include "BRCryptoWalletManager.h"
 #include "BRCryptoSystem.h"
 
+#include <pthread.h>
+#include <stdio.h>
+
 IMPLEMENT_CRYPTO_GIVE_TAKE (BRCryptoListener, cryptoListener)
+
+static void
+report (bool isSignal, const char *typeName) {
+    char pthreadName[128];
+    pthread_getname_np(pthread_self(), pthreadName, 127);
+    printf ("DBG: Event: %s: '%45s' (on '%s')\n",
+            (isSignal ? "EN" : "DE"),
+            typeName,
+            ('\0' == pthreadName[0] ? "Swift/Java" :  pthreadName));
+}
+
+static void
+reportTransferEvent (bool isSignal, BRCryptoTransferEvent event) {
+    report (isSignal, cryptoTransferEventTypeString (event.type));
+}
+
+static void
+reportWalletEvent (bool isSignal, BRCryptoWalletEvent event) {
+    report (isSignal, cryptoWalletEventTypeString (cryptoWalletEventGetType(event)));
+}
+
+static void
+reportManagerEvent (bool isSignal, BRCryptoWalletManagerEvent event) {
+    report (isSignal, cryptoWalletManagerEventTypeString (event.type));
+}
+
+static void
+reportNetworkEvent (bool isSignal, BRCryptoNetworkEvent event) {
+    report (isSignal, cryptoNetworkEventTypeString (event.type));
+}
+
+static void
+reportSystemEvent (bool isSignal, BRCryptoSystemEvent event) {
+    report (isSignal, cryptoSystemEventTypeString (event.type));
+}
+
 
 // MARK: - Generate Transfer Event
 
@@ -33,6 +72,7 @@ typedef struct {
 static void
 cryptoListenerSignalTransferEventDispatcher (BREventHandler ignore,
                                              BRListenerSignalTransferEvent *event) {
+    reportTransferEvent (true, event->event);
     event->listener->transferCallback (event->listener->context,
                                        event->manager,
                                        event->wallet,
@@ -41,7 +81,7 @@ cryptoListenerSignalTransferEventDispatcher (BREventHandler ignore,
 }
 
 static BREventType handleListenerSignalTransferEventType = {
-    "CWM: Handle Listener Transfer EVent",
+    "CWM: Handle Listener Transfer Event",
     sizeof (BRListenerSignalTransferEvent),
     (BREventDispatcher) cryptoListenerSignalTransferEventDispatcher
 };
@@ -60,6 +100,7 @@ cryptoListenerGenerateTransferEvent (const BRCryptoTransferListener *listener,
         cryptoTransferTakeWeak (transfer),
         event };
 
+    reportTransferEvent (true, event);
     eventHandlerSignalEvent(listener->listener->handler, (BREvent *) &listenerEvent);
 }
 
@@ -76,6 +117,7 @@ typedef struct {
 static void
 cryptoListenerSignalWalletEventDispatcher (BREventHandler ignore,
                                            BRListenerSignalWalletEvent *event) {
+    reportWalletEvent(false, event->event);
     event->listener->walletCallback (event->listener->context,
                                      event->manager,
                                      event->wallet,
@@ -101,6 +143,7 @@ cryptoListenerGenerateWalletEvent (const BRCryptoWalletListener *listener,
         cryptoWalletTakeWeak (wallet),
         event };
 
+    reportWalletEvent (true, event);
     eventHandlerSignalEvent(listener->listener->handler, (BREvent *) &listenerEvent);
 }
 
@@ -116,6 +159,7 @@ typedef struct {
 static void
 cryptoListenerSignalManagerEventDispatcher (BREventHandler ignore,
                                             BRListenerSignalManagerEvent *event) {
+    reportManagerEvent(false, event->event);
     event->listener->managerCallback (event->listener->context,
                                       event->manager,
                                       event->event);
@@ -139,6 +183,7 @@ cryptoListenerGenerateManagerEvent (const BRCryptoWalletManagerListener *listene
         cryptoWalletManagerTakeWeak (manager),
         event };
 
+    reportManagerEvent(true, event);
     eventHandlerSignalEvent (listener->listener->handler, (BREvent *) &listenerEvent);
 }
 
@@ -154,6 +199,7 @@ typedef struct {
 static void
 cryptoListenerSignalNetworkEventDispatcher (BREventHandler ignore,
                                             BRListenerSignalNetworkEvent *event) {
+    reportNetworkEvent(false, event->event);
     event->listener->networkCallback (event->listener->context,
                                       event->network,
                                       event->event);
@@ -177,6 +223,7 @@ cryptoListenerGenerateNetworkEvent (const BRCryptoNetworkListener *listener,
         cryptoNetworkTakeWeak (network),
         event };
 
+    reportNetworkEvent(true, event);
     eventHandlerSignalEvent (listener->listener->handler, (BREvent *) &listenerEvent);
 }
 
@@ -192,6 +239,7 @@ typedef struct {
 static void
 cryptoListenerSignalSystemEventDispatcher (BREventHandler ignore,
                                            BRListenerSignalSystemEvent *event) {
+    reportSystemEvent(false, event->event);
     event->listener->systemCallback (event->listener->context,
                                      event->system,
                                      event->event);
@@ -215,6 +263,7 @@ cryptoListenerGenerateSystemEvent (BRCryptoListener listener,
         cryptoSystemTakeWeak (system),
         event };
 
+    reportSystemEvent(true, event);
     eventHandlerSignalEvent (listener->handler, (BREvent *) &listenerEvent);
 }
 
