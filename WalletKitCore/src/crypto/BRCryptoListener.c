@@ -23,7 +23,7 @@
 
 IMPLEMENT_CRYPTO_GIVE_TAKE (BRCryptoListener, cryptoListener)
 
-static void
+/*static void
 report (bool isSignal, const char *typeName) {
     char pthreadName[128];
     pthread_getname_brd(pthread_self(), pthreadName, 127);
@@ -56,7 +56,7 @@ reportNetworkEvent (bool isSignal, BRCryptoNetworkEvent event) {
 static void
 reportSystemEvent (bool isSignal, BRCryptoSystemEvent event) {
     report (isSignal, cryptoSystemEventTypeString (event.type));
-}
+}*/
 
 
 // MARK: - Generate Transfer Event
@@ -73,7 +73,7 @@ typedef struct {
 static void
 cryptoListenerSignalTransferEventDispatcher (BREventHandler ignore,
                                              BRListenerSignalTransferEvent *event) {
-    reportTransferEvent (true, event->event);
+//    reportTransferEvent (true, event->event);
     event->listener->transferCallback (event->listener->context,
                                        event->manager,
                                        event->wallet,
@@ -105,17 +105,7 @@ cryptoListenerGenerateTransferEvent (const BRCryptoTransferListener *listener,
               "TRANSFER_EV",
               cryptoTransferEventTypeString(event.type));
 
-/*    char evDesc[MAX_EV_DESCRIPTION_LEN];
-    snprintf(evDesc,
-             MAX_EV_DESCRIPTION_LEN,
-             "TRANSFER_EV:%s",
-             cryptoTransferEventTypeString(event.type));
-
-    strncpy(listenerEvent.base.eventDescription,
-            evDesc,
-            MAX_EV_DESCRIPTION_LEN);*/
-
-    reportTransferEvent (true, event);
+//    reportTransferEvent (true, event);
     eventHandlerSignalEvent(listener->listener->handler, (BREvent *) &listenerEvent);
 }
 
@@ -132,7 +122,7 @@ typedef struct {
 static void
 cryptoListenerSignalWalletEventDispatcher (BREventHandler ignore,
                                            BRListenerSignalWalletEvent *event) {
-    reportWalletEvent(false, event->event);
+//    reportWalletEvent(false, event->event);
     event->listener->walletCallback (event->listener->context,
                                      event->manager,
                                      event->wallet,
@@ -162,18 +152,7 @@ cryptoListenerGenerateWalletEvent (const BRCryptoWalletListener *listener,
               "WALLET_EV",
               cryptoWalletEventTypeString(cryptoWalletEventGetType(event)));
 
- /*   char evDesc[MAX_EV_DESCRIPTION_LEN];
-    snprintf(evDesc,
-             MAX_EV_DESCRIPTION_LEN,
-             "WALLET_EV:%s",
-             cryptoWalletEventTypeString(cryptoWalletEventGetType(event)));
-
-    strncpy(listenerEvent.base.eventDescription,
-            evDesc,
-            MAX_EV_DESCRIPTION_LEN);*/
-
-
-    reportWalletEvent (true, event);
+ //   reportWalletEvent (true, event);
     eventHandlerSignalEvent(listener->listener->handler, (BREvent *) &listenerEvent);
 }
 
@@ -189,7 +168,7 @@ typedef struct {
 static void
 cryptoListenerSignalManagerEventDispatcher (BREventHandler ignore,
                                             BRListenerSignalManagerEvent *event) {
-    reportManagerEvent(false, event->event);
+//    reportManagerEvent(false, event->event);
     event->listener->managerCallback (event->listener->context,
                                       event->manager,
                                       event->event);
@@ -217,18 +196,7 @@ cryptoListenerGenerateManagerEvent (const BRCryptoWalletManagerListener *listene
               "WALLET_MGR_EV",
               cryptoWalletManagerEventTypeString(event.type));
 
- /*   char evDesc[MAX_EV_DESCRIPTION_LEN];
-    snprintf(evDesc,
-             MAX_EV_DESCRIPTION_LEN,
-             "WALLET_MGR_EV:%s",
-             cryptoWalletManagerEventTypeString(event.type));
-
-    strncpy(listenerEvent.base.eventDescription,
-            evDesc,
-            MAX_EV_DESCRIPTION_LEN);*/
-
-
-    reportManagerEvent(true, event);
+ //   reportManagerEvent(true, event);
     eventHandlerSignalEvent (listener->listener->handler, (BREvent *) &listenerEvent);
 }
 
@@ -244,7 +212,7 @@ typedef struct {
 static void
 cryptoListenerSignalNetworkEventDispatcher (BREventHandler ignore,
                                             BRListenerSignalNetworkEvent *event) {
-    reportNetworkEvent(false, event->event);
+  //  reportNetworkEvent(false, event->event);
     event->listener->networkCallback (event->listener->context,
                                       event->network,
                                       event->event);
@@ -272,18 +240,7 @@ cryptoListenerGenerateNetworkEvent (const BRCryptoNetworkListener *listener,
               "NETWORK_EV",
               cryptoNetworkEventTypeString(event.type));
 
-    /*
-    char evDesc[MAX_EV_DESCRIPTION_LEN];
-    snprintf(evDesc,
-             MAX_EV_DESCRIPTION_LEN,
-             "NETWORK_EV:%s",
-             cryptoNetworkEventTypeString(event.type));
-
-    strncpy(listenerEvent.base.eventDescription,
-            evDesc,
-            MAX_EV_DESCRIPTION_LEN);*/
-
-    reportNetworkEvent(true, event);
+ //   reportNetworkEvent(true, event);
     eventHandlerSignalEvent (listener->listener->handler, (BREvent *) &listenerEvent);
 }
 
@@ -299,7 +256,7 @@ typedef struct {
 static void
 cryptoListenerSignalSystemEventDispatcher (BREventHandler ignore,
                                            BRListenerSignalSystemEvent *event) {
-    reportSystemEvent(false, event->event);
+ //   reportSystemEvent(false, event->event);
     event->listener->systemCallback (event->listener->context,
                                      event->system,
                                      event->event);
@@ -326,18 +283,8 @@ cryptoListenerGenerateSystemEvent (BRCryptoListener listener,
     TAG_EVENT(&listenerEvent.base,
               "SYSTEM_EV",
               cryptoSystemEventTypeString(event.type));
-    /*
-    char evDesc[MAX_EV_DESCRIPTION_LEN];
-    snprintf(evDesc,
-             MAX_EV_DESCRIPTION_LEN,
-             "SYSTEM_EV:%s",
-             cryptoSystemEventTypeString(event.type));
 
-    strncpy(listenerEvent.base.eventDescription,
-            evDesc,
-            MAX_EV_DESCRIPTION_LEN);*/
-
-    reportSystemEvent(true, event);
+//    reportSystemEvent(true, event);
     eventHandlerSignalEvent (listener->handler, (BREvent *) &listenerEvent);
 }
 

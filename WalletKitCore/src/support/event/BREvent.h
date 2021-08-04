@@ -72,19 +72,8 @@ struct BREventRecord {
 };
 
 #ifdef __EXPOSE_EVENTS__
-
-static inline void tagEventDescription(BREvent *ev, const char* tag, const char* type) {
-    char evDesc[MAX_EV_DESCRIPTION_LEN];
-    snprintf(evDesc,
-             MAX_EV_DESCRIPTION_LEN,
-             "%s %s",
-             tag,
-             type != NULL ? type : "");
-
-    strncpy(ev->eventDescription,
-            evDesc,
-            MAX_EV_DESCRIPTION_LEN);
-}
+extern void
+tagEventDescription(BREvent *ev, const char* tag, const char* type) ;
 #define TAG_EVENT(ev, tag, type) tagEventDescription(ev, tag, type)
 
 #else

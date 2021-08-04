@@ -75,6 +75,19 @@ struct BREventHandlerRecord {
     pthread_mutex_t *lockOnDispatch;
 };
 
+extern void tagEventDescription(BREvent *ev, const char* tag, const char* type) {
+    char evDesc[MAX_EV_DESCRIPTION_LEN];
+    snprintf(evDesc,
+             MAX_EV_DESCRIPTION_LEN,
+             "%s %s",
+             tag,
+             type != NULL ? type : "");
+
+    strncpy(ev->eventDescription,
+            evDesc,
+            MAX_EV_DESCRIPTION_LEN);
+}
+
 extern BREventHandler
 eventHandlerCreate (const char *name,
                     const BREventType *types[],
@@ -137,9 +150,6 @@ eventHandlerAlarmCallback (BREventHandler handler,
                            BREventAlarmClock clock) {
     BREventTimeout event =
     { { NULL, &handler->timeoutEventType }, handler->timeoutContext, expiration};
-   /* strncpy(event.base.eventDescription,
-            "TIMEOUT",
-            MAX_EV_DESCRIPTION_LEN);*/
     TAG_EVENT(&event.base, "TIMEOUT", NULL);
 
     eventHandlerSignalEventOOB (handler, (BREvent*) &event);
@@ -147,7 +157,9 @@ eventHandlerAlarmCallback (BREventHandler handler,
 
 static void *
 eventHandlerThread (BREventHandler handler) {
-    pthread_setname_brd (pthread_self(), handler->name);
+    //pthread_setname_brd (pthread_self(), handler->name);
+    char handlerThreadName[PTHREAD_NAME_SIZE_NP];
+    pthread_getname_brd(pthread_self, handlerThreadName, PTHREAD_NAME_SIZE_NP);
 
     int timeToQuit = 0;
 
@@ -160,7 +172,7 @@ eventHandlerThread (BREventHandler handler) {
 
                 uni_log("DBG-EV", "DQ-HDLR %s in th: %s\n",
                         handler->scratch->eventDescription,
-                        handler->name);
+                        handlerThreadName);
 
                 handler->scratch->type->eventDispatcher (handler, handler->scratch);
                 if (handler->lockOnDispatch) pthread_mutex_unlock (handler->lockOnDispatch);

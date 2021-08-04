@@ -645,7 +645,7 @@ cryptoSystemAddWalletManager (BRCryptoSystem system,
 
         uni_log("DBG-EV",
                 "Added: WalletManager: \"%s\"\n",
-                cryptoWalletManagerGetNetwork(manager));
+                cryptoNetworkGetName(cryptoWalletManagerGetNetwork(manager)));
 
         cryptoListenerGenerateSystemEvent (system->listener, system, (BRCryptoSystemEvent) {
             CRYPTO_SYSTEM_EVENT_MANAGER_ADDED,
