@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.10.2)
 
 # Change the default RELEASE and DEBUG flags.
 # Even for RELEASE build, always use DEBUG and never NDEBUG (to enable assert())
-set(CMAKE_C_FLAGS_DEBUG   "-DDEBUG")
+set(CMAKE_C_FLAGS_DEBUG   "-DDEBUG -D__EXPOSE_EVENTS__")
 set(CMAKE_C_FLAGS_RELEASE "-Oz")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")

@@ -558,6 +558,11 @@ cryptoClientAnnounceBlockNumber (OwnershipKept BRCryptoWalletManager cwm,
         blockNumber,
         (NULL == blockHashString ? NULL : strdup (blockHashString)) };
 
+    TAG_EVENT(&event.base, "ANNOUNCE_BLOCK_NUMBER", NULL);
+    /*strncpy(event.base.eventDescription,
+            "ANNOUNCE_BLOCK_NUMBER",
+            MAX_EV_DESCRIPTION_LEN);*/
+
     eventHandlerSignalEvent (cwm->handler, (BREvent *) &event);
 }
 
@@ -704,6 +709,11 @@ cryptoClientAnnounceTransactions (OwnershipKept BRCryptoWalletManager manager,
         success,
         eventBundles };
 
+    TAG_EVENT(&event.base, "ANNOUNCE_TRANSACTIONS", NULL);
+    /*strncpy(event.base.eventDescription,
+            "ANNOUNCE_TRANSACTIONS",
+            MAX_EV_DESCRIPTION_LEN);*/
+
     eventHandlerSignalEvent (manager->handler, (BREvent *) &event);
 }
 
@@ -829,6 +839,12 @@ cryptoClientAnnounceTransfers (OwnershipKept BRCryptoWalletManager manager,
         callbackState,
         success,
         eventBundles };
+
+    TAG_EVENT(&event.base, "ANNOUNCE_TRANSFERS", NULL);
+
+    /*strncpy(event.base.eventDescription,
+            "ANNOUNCE_TRANSFERS",
+            MAX_EV_DESCRIPTION_LEN);*/
 
     eventHandlerSignalEvent (manager->handler, (BREvent *) &event);
 }
@@ -1044,6 +1060,11 @@ cryptoClientAnnounceSubmitTransfer (OwnershipKept BRCryptoWalletManager manager,
         (NULL == hash ? NULL : strdup (hash)),
         success };
 
+    TAG_EVENT(&event.base, "ANNOUNCE_SUBMIT_TRANSFER", NULL);
+    /*strncpy(event.base.eventDescription,
+            "ANNOUNCE_SUBMIT_TRANSFER",
+            MAX_EV_DESCRIPTION_LEN);*/
+
     eventHandlerSignalEvent (manager->handler, (BREvent *) &event);
 }
 
@@ -1173,6 +1194,12 @@ cryptoClientAnnounceEstimateTransactionFee (OwnershipKept BRCryptoWalletManager 
         costUnits,
         keys,
         vals };
+
+    TAG_EVENT(&event.base, "ANNOUNCE_ESTIMATE_TRANSACTION_FEE", NULL);
+
+    /*strncpy(event.base.eventDescription,
+            "ANNOUNCE_ESTIMATE_TRANSACTION_FEE",
+            MAX_EV_DESCRIPTION_LEN);*/
 
     eventHandlerSignalEvent (manager->handler, (BREvent *) &event);
 

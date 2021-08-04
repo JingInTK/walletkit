@@ -12,6 +12,7 @@
 #include <string.h>
 #include <pthread.h>
 #include "support/BROSCompat.h"
+#include "support/BRLog.h"
 
 #include "BREventQueue.h"
 
@@ -115,6 +116,13 @@ eventQueueEnqueue (BREventQueue queue,
                    int tail,
                    int signal) {
     pthread_mutex_lock(&queue->lock);
+
+    char nm[PTHREAD_NAME_SIZE_NP];
+    pthread_getname_brd(pthread_self(), nm, PTHREAD_NAME_SIZE_NP);
+
+    uni_log("DBG-EV", "EQ: %s th: %s\n",
+            event->eventDescription,
+            nm);
 
     // Get the next available event
     BREvent *this = queue->available;

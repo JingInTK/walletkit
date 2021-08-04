@@ -53,16 +53,45 @@ struct BREventTypeRecord{
     BREventDestroyer eventDestroyer;
 };
 
+#ifdef __EXPOSE_EVENTS__
+#define MAX_EV_DESCRIPTION_LEN  (256)
+#endif
+
 /**
  * A Event is an asynchronous occurance with an arbitrary set of data and a specified type.
  */
 struct BREventRecord {
     struct BREventRecord *next;
     BREventType *type;
+#ifdef __EXPOSE_EVENTS__
+    char eventDescription[MAX_EV_DESCRIPTION_LEN];
+#endif
     // Add 'context'
     
     // arguments
 };
+
+#ifdef __EXPOSE_EVENTS__
+
+static inline void tagEventDescription(BREvent *ev, const char* tag, const char* type) {
+    char evDesc[MAX_EV_DESCRIPTION_LEN];
+    snprintf(evDesc,
+             MAX_EV_DESCRIPTION_LEN,
+             "%s %s",
+             tag,
+             type != NULL ? type : "");
+
+    strncpy(ev->eventDescription,
+            evDesc,
+            MAX_EV_DESCRIPTION_LEN);
+}
+#define TAG_EVENT(ev, tag, type) tagEventDescription(ev, tag, type)
+
+#else
+
+#define TAG_EVENT(ev, tag, type)
+
+#endif // __EXPOSE_EVENTS__
 
 /**
  * The EventStatus (is really an EventHandlerStatus).

@@ -16,6 +16,7 @@
 #include "support/BRAssert.h"
 #include "support/BRArray.h"
 #include "support/BROSCompat.h"
+#include "support/BRLog.h"
 #include "BREvent.h"
 #include "BREventAlarm.h"
 
@@ -305,6 +306,12 @@ alarmClockStart (BREventAlarmClock clock) {
         pthread_attr_setstacksize(&attr, PTHREAD_STACK_SIZE);
 
         pthread_create(&clock->thread, &attr, (ThreadRoutine) alarmClockThread, clock);
+
+        char nm[PTHREAD_NAME_SIZE_NP];
+        strncpy(nm, "ALARM", PTHREAD_NAME_SIZE_NP);
+        pthread_setname_brd(clock->thread, nm);
+        uni_log("DBG-EV", "THREAD Create %s\n", nm);
+
         pthread_attr_destroy(&attr);
     }
     pthread_mutex_unlock(&clock->lockOnStartStop);

@@ -63,7 +63,7 @@ typedef enum {
 } BRCryptoWalletEventType;
 
 extern const char *
-cryptoWalletEventTypeString (BRCryptoWalletEventType t);
+cryptoWalletEventTypeString (BRCryptoWalletEventType event);
 
 typedef struct BRCryptoWalletEventRecord *BRCryptoWalletEvent;
 

@@ -31,6 +31,8 @@
 #include "BRAssert.h"
 #include "BRArray.h"
 #include "BROSCompat.h"
+#include "support/BRLog.h"
+
 
 #if defined(TARGET_OS_MAC)
 #include <Foundation/Foundation.h>
@@ -190,6 +192,12 @@ BRAssertInstall (BRAssertInfo info, BRAssertHandler handler) {
         pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
         pthread_attr_setstacksize (&attr, 1024 * 1024);
         pthread_create (&context.thread, &attr, (ThreadRoutine) BRAssertThread, &context);
+
+        char nm[PTHREAD_NAME_SIZE_NP];
+        strncpy(nm, "ASSERT", PTHREAD_NAME_SIZE_NP);
+        pthread_setname_brd(context.thread, nm);
+        uni_log("DBG-EV", "THREAD Create %s\n", nm);
+
         pthread_attr_destroy(&attr);
     }
 

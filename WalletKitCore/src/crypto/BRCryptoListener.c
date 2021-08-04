@@ -10,6 +10,7 @@
 
 #include "BRCryptoListenerP.h"
 #include "support/BROSCompat.h"
+#include "support/BRLog.h"
 
 #include "BRCryptoNetwork.h"
 #include "BRCryptoTransfer.h"
@@ -26,7 +27,7 @@ static void
 report (bool isSignal, const char *typeName) {
     char pthreadName[128];
     pthread_getname_brd(pthread_self(), pthreadName, 127);
-    printf ("DBG: Event: %s: '%45s' (on '%s')\n",
+    uni_log("DBG-EV", "Event: %s: '%45s' (on '%s')\n",
             (isSignal ? "EN" : "DE"),
             typeName,
             ('\0' == pthreadName[0] ? "Swift/Java" :  pthreadName));
@@ -100,6 +101,20 @@ cryptoListenerGenerateTransferEvent (const BRCryptoTransferListener *listener,
         cryptoTransferTakeWeak (transfer),
         event };
 
+    TAG_EVENT(&listenerEvent.base,
+              "TRANSFER_EV",
+              cryptoTransferEventTypeString(event.type));
+
+/*    char evDesc[MAX_EV_DESCRIPTION_LEN];
+    snprintf(evDesc,
+             MAX_EV_DESCRIPTION_LEN,
+             "TRANSFER_EV:%s",
+             cryptoTransferEventTypeString(event.type));
+
+    strncpy(listenerEvent.base.eventDescription,
+            evDesc,
+            MAX_EV_DESCRIPTION_LEN);*/
+
     reportTransferEvent (true, event);
     eventHandlerSignalEvent(listener->listener->handler, (BREvent *) &listenerEvent);
 }
@@ -143,6 +158,21 @@ cryptoListenerGenerateWalletEvent (const BRCryptoWalletListener *listener,
         cryptoWalletTakeWeak (wallet),
         event };
 
+    TAG_EVENT(&listenerEvent.base,
+              "WALLET_EV",
+              cryptoWalletEventTypeString(cryptoWalletEventGetType(event)));
+
+ /*   char evDesc[MAX_EV_DESCRIPTION_LEN];
+    snprintf(evDesc,
+             MAX_EV_DESCRIPTION_LEN,
+             "WALLET_EV:%s",
+             cryptoWalletEventTypeString(cryptoWalletEventGetType(event)));
+
+    strncpy(listenerEvent.base.eventDescription,
+            evDesc,
+            MAX_EV_DESCRIPTION_LEN);*/
+
+
     reportWalletEvent (true, event);
     eventHandlerSignalEvent(listener->listener->handler, (BREvent *) &listenerEvent);
 }
@@ -182,6 +212,21 @@ cryptoListenerGenerateManagerEvent (const BRCryptoWalletManagerListener *listene
         listener->listener,
         cryptoWalletManagerTakeWeak (manager),
         event };
+
+    TAG_EVENT(&listenerEvent.base,
+              "WALLET_MGR_EV",
+              cryptoWalletManagerEventTypeString(event.type));
+
+ /*   char evDesc[MAX_EV_DESCRIPTION_LEN];
+    snprintf(evDesc,
+             MAX_EV_DESCRIPTION_LEN,
+             "WALLET_MGR_EV:%s",
+             cryptoWalletManagerEventTypeString(event.type));
+
+    strncpy(listenerEvent.base.eventDescription,
+            evDesc,
+            MAX_EV_DESCRIPTION_LEN);*/
+
 
     reportManagerEvent(true, event);
     eventHandlerSignalEvent (listener->listener->handler, (BREvent *) &listenerEvent);
@@ -223,6 +268,21 @@ cryptoListenerGenerateNetworkEvent (const BRCryptoNetworkListener *listener,
         cryptoNetworkTakeWeak (network),
         event };
 
+    TAG_EVENT(&listenerEvent.base,
+              "NETWORK_EV",
+              cryptoNetworkEventTypeString(event.type));
+
+    /*
+    char evDesc[MAX_EV_DESCRIPTION_LEN];
+    snprintf(evDesc,
+             MAX_EV_DESCRIPTION_LEN,
+             "NETWORK_EV:%s",
+             cryptoNetworkEventTypeString(event.type));
+
+    strncpy(listenerEvent.base.eventDescription,
+            evDesc,
+            MAX_EV_DESCRIPTION_LEN);*/
+
     reportNetworkEvent(true, event);
     eventHandlerSignalEvent (listener->listener->handler, (BREvent *) &listenerEvent);
 }
@@ -262,6 +322,20 @@ cryptoListenerGenerateSystemEvent (BRCryptoListener listener,
         listener,
         cryptoSystemTakeWeak (system),
         event };
+
+    TAG_EVENT(&listenerEvent.base,
+              "SYSTEM_EV",
+              cryptoSystemEventTypeString(event.type));
+    /*
+    char evDesc[MAX_EV_DESCRIPTION_LEN];
+    snprintf(evDesc,
+             MAX_EV_DESCRIPTION_LEN,
+             "SYSTEM_EV:%s",
+             cryptoSystemEventTypeString(event.type));
+
+    strncpy(listenerEvent.base.eventDescription,
+            evDesc,
+            MAX_EV_DESCRIPTION_LEN);*/
 
     reportSystemEvent(true, event);
     eventHandlerSignalEvent (listener->handler, (BREvent *) &listenerEvent);

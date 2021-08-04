@@ -30,6 +30,7 @@
 #include "support/BRArray.h"
 #include "support/BRCrypto.h"
 #include "support/BRInt.h"
+#include "support/BRLog.h"
 #include <stdlib.h>
 #include <float.h>
 #include <inttypes.h>
@@ -1260,6 +1261,12 @@ void BRPeerConnect(BRPeer *peer)
                 pthread_attr_destroy(&attr);
                 ctx->status = BRPeerStatusDisconnected;
                 //if (ctx->disconnected) ctx->disconnected(ctx->info, error);
+
+            } else {
+                char nm[PTHREAD_NAME_SIZE_NP];
+                snprintf(nm, PTHREAD_NAME_SIZE_NP, "BTCPR-%u", ctx->magicNumber);
+                pthread_setname_brd(ctx->thread, nm);
+                uni_log("DBG-EV", "THREAD Create BTC peer %s\n", nm);
             }
         }
     }

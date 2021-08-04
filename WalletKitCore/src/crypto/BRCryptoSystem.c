@@ -11,6 +11,7 @@
 #include "support/BROSCompat.h"
 #include "support/BRFileService.h"
 #include "support/BRCrypto.h"
+#include "support/BRLog.h"
 
 #include "crypto/BRCryptoSystemP.h"
 #include "crypto/BRCryptoNetworkP.h"
@@ -639,8 +640,13 @@ cryptoSystemAddWalletManager (BRCryptoSystem system,
     pthread_mutex_lock (&system->lock);
     if (CRYPTO_FALSE == cryptoSystemHasWalletManagerFor (system, manager, NULL, false)) {
         array_add (system->managers, cryptoWalletManagerTake(manager));
-        printf ("DBG: Added: WalletManager: %s\n",
-                cryptoNetworkGetName(cryptoWalletManagerGetNetwork(manager)));
+     /*   printf ("DBG: Added: WalletManager: %s\n",
+                cryptoNetworkGetName(cryptoWalletManagerGetNetwork(manager))); */
+
+        uni_log("DBG-EV",
+                "Added: WalletManager: \"%s\"\n",
+                cryptoWalletManagerGetNetwork(manager));
+
         cryptoListenerGenerateSystemEvent (system->listener, system, (BRCryptoSystemEvent) {
             CRYPTO_SYSTEM_EVENT_MANAGER_ADDED,
             { .manager = cryptoWalletManagerTake (manager) }

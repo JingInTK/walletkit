@@ -53,6 +53,11 @@ extern "C" {
 
 typedef void* (*ThreadRoutine) (void*);         // pthread_create
 
+// Per pthread_setname_np Linux man page, the maximum thread name length
+// including the null char. This is presumably a kernel based restriction for
+// native threads
+#define PTHREAD_NAME_SIZE_NP    (16)
+
 extern int
 pthread_setname_brd(pthread_t,  const char *name);
 

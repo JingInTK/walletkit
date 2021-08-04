@@ -16,8 +16,12 @@
 #include "BREventQueue.h"
 #include "BREventAlarm.h"
 #include "support/BROSCompat.h"
+#include "support/BRLog.h"
 
 #define PTHREAD_STACK_SIZE (512 * 1024)
+
+// TODO: Check this as Linux pthread_setname_np describes the maximum name
+//       length as being 16 chars (including null char)
 #define PTHREAD_NAME_SIZE   (33)
 
 /* Forward Declarations */
@@ -109,6 +113,8 @@ eventHandlerCreate (const char *name,
     handler->scratch = (BREvent*) calloc (1, handler->eventSize);
     handler->queue = eventQueueCreate (handler->eventSize);
 
+    uni_log("DBG-EV", "Created handler \"%s\"\n", name);
+
     return handler;
 }
 
@@ -131,6 +137,11 @@ eventHandlerAlarmCallback (BREventHandler handler,
                            BREventAlarmClock clock) {
     BREventTimeout event =
     { { NULL, &handler->timeoutEventType }, handler->timeoutContext, expiration};
+   /* strncpy(event.base.eventDescription,
+            "TIMEOUT",
+            MAX_EV_DESCRIPTION_LEN);*/
+    TAG_EVENT(&event.base, "TIMEOUT", NULL);
+
     eventHandlerSignalEventOOB (handler, (BREvent*) &event);
 }
 
@@ -146,6 +157,11 @@ eventHandlerThread (BREventHandler handler) {
             case EVENT_STATUS_SUCCESS:
                 // We got an event, dispatch
                 if (handler->lockOnDispatch) pthread_mutex_lock (handler->lockOnDispatch);
+
+                uni_log("DBG-EV", "DQ-HDLR %s in th: %s\n",
+                        handler->scratch->eventDescription,
+                        handler->name);
+
                 handler->scratch->type->eventDispatcher (handler, handler->scratch);
                 if (handler->lockOnDispatch) pthread_mutex_unlock (handler->lockOnDispatch);
 
@@ -227,6 +243,12 @@ eventHandlerStart (BREventHandler handler) {
             //
             // TODO: Handle an unsuccessfull call.
             // assert (NULL != handler->thread);
+
+            char nm[PTHREAD_NAME_SIZE_NP];
+            snprintf(nm, PTHREAD_NAME_SIZE_NP, "HDLR-%s", handler->name);
+            pthread_setname_brd(handler->thread, nm);
+            uni_log("DBG-EV", "THREAD Create \"%s\" for handler %s\n", nm, handler->name);
+
 
             pthread_attr_destroy(&attr);
         }

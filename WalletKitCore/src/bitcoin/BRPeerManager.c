@@ -27,6 +27,7 @@
 #include "support/BRSet.h"
 #include "support/BRArray.h"
 #include "support/BRInt.h"
+#include "support/BRLog.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
@@ -693,7 +694,15 @@ static void _BRPeerManagerFindPeers(BRPeerManager *manager)
             info->hostname = manager->params->dnsSeeds[i];
             info->services = services;
             if (pthread_attr_init(&attr) == 0 && pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) == 0 &&
-                pthread_create(&thread, &attr, _findPeersThreadRoutine, info) == 0) manager->dnsThreadCount++;
+                pthread_create(&thread, &attr, _findPeersThreadRoutine, info) == 0) {
+
+                char nm[PTHREAD_NAME_SIZE_NP];
+                snprintf(nm, PTHREAD_NAME_SIZE_NP, "BTCDNS-%d", manager->dnsThreadCount);
+                pthread_setname_brd(thread, nm);
+                uni_log("DBG-EV", "THREAD Create BTC DNS %s\n", nm);
+
+                manager->dnsThreadCount++;
+            }
             else free (info);
         }
 

@@ -19,6 +19,7 @@
 #include "support/BRInt.h"
 #include "support/BRArray.h"
 #include "support/BROSCompat.h"
+#include "support/BRLog.h"
 #include "support/rlp/BRRlp.h"
 #include "ethereum/util/BRUtil.h"
 #include "ethereum/base/BREthereumBase.h"
@@ -659,6 +660,12 @@ lesStart (BREthereumLES les) {
 
         les->theTimeToQuitIsNow = 0;
         pthread_create (&les->thread, &attr, (ThreadRoutine) lesThread, les);
+
+        char nm[PTHREAD_NAME_SIZE_NP];
+        strncpy(nm, "ETHLES", PTHREAD_NAME_SIZE_NP);
+        uni_log("DBG-EV", "THREAD Create ETH LES %s\n", nm);
+        pthread_setname_brd(les->thread, nm);
+
         pthread_attr_destroy (&attr);
     }
     pthread_mutex_unlock (&les->lock);
@@ -1064,6 +1071,12 @@ lesSeedQueryAllThreaded (BREthereumLES les) {
     pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
     pthread_attr_setstacksize (&attr, 1024 * 1024);
     pthread_create (&thread, &attr, (ThreadRoutine) lesSeedQueryAll, les);
+
+    char nm[PTHREAD_NAME_SIZE_NP];
+    strncpy(nm, "ETHLESQUERY", PTHREAD_NAME_SIZE_NP);
+    pthread_setname_brd(thread, nm);
+    uni_log("DBG-EV", "THREAD Create ETH seed query %s\n", nm);
+
     pthread_attr_destroy(&attr);
 }
 #endif

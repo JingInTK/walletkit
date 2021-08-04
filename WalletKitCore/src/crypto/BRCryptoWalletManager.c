@@ -34,6 +34,7 @@
 #include "bitcoin/BRMerkleBlock.h"
 #include "bitcoin/BRPeer.h"
 #include "support/event/BREventAlarm.h"
+#include "support/BRLog.h"
 
 // We'll do a period QRY 'tick-tock' CWM_CONFIRMATION_PERIOD_FACTOR times in
 // each network's ConfirmationPeriod.  Thus, for example, the Bitcoin confirmation period is
