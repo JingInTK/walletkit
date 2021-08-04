@@ -25,7 +25,7 @@ IMPLEMENT_CRYPTO_GIVE_TAKE (BRCryptoListener, cryptoListener)
 static void
 report (bool isSignal, const char *typeName) {
     char pthreadName[128];
-    pthread_getname_np(pthread_self(), pthreadName, 127);
+    pthread_getname_brd(pthread_self(), pthreadName, 127);
     printf ("DBG: Event: %s: '%45s' (on '%s')\n",
             (isSignal ? "EN" : "DE"),
             typeName,

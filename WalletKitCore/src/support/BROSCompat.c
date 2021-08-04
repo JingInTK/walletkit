@@ -30,6 +30,9 @@
 #if defined (__APPLE__)
 #include <Security/Security.h>
 #endif
+#if defined (__ANDROID__) || defined (__linux__)
+#include <sys/prctl.h>
+#endif
 
 extern int
 pthread_setname_brd(pthread_t thread,  const char *name) {
@@ -41,6 +44,18 @@ pthread_setname_brd(pthread_t thread,  const char *name) {
 #  error Undefined pthread_setname_brd()
 #endif
 }
+
+extern int
+pthread_getname_brd(pthread_t thread, char* name, size_t len) {
+#if defined (__ANDROID__) || defined (__linux__)
+    return prctl(PR_GET_NAME, (unsigned long)name, 0, 0);
+#elif defined (__APPLE__)
+    return pthread_getname_np (thread, name, len);
+#else
+#  error Undefined pthread_setname_brd()
+#endif
+}
+
 
 extern int
 pthread_mutex_init_brd (pthread_mutex_t *mutex, int type) {
